@@ -38,6 +38,7 @@ public:
   void update(double torque, double dt);
   DifferentiatedState modelFunction(const State &state, double torque) const;
   State getState(); // thread-safe getter for the current state of the system
+  Parameters getParameters() const { return params_; }
 
 private:
   Parameters params_;
