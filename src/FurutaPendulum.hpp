@@ -28,6 +28,10 @@ struct Parameters
   double pendulum_end_mass;
   double gravity;
   double center_pillar_inertia;
+  double arm_viscouse_friction;
+  double pendulum_viscouse_friction;
+  double arm_coulomb_friction;
+  double pendulum_coulomb_friction;
 };
 
 class FurutaPendulum
@@ -35,8 +39,10 @@ class FurutaPendulum
 public:
   FurutaPendulum(const Parameters &params, const State &initial_state = {0.0, 0.0, 0.0, 0.0});
 
-  void update(double torque, double dt);
-  DifferentiatedState modelFunction(const State &state, double torque) const;
+  void update(const double &motor_torque, const double &arm_distubance_torque, const double &pendulum_distubance_torque,
+              const double &dt);
+  DifferentiatedState modelFunction(const State &state, const double &motor_torque, const double &arm_distubance_torque,
+                                    const double &pendulum_distubance_torque) const;
   State getState(); // thread-safe getter for the current state of the system
   Parameters getParameters() const { return params_; }
 

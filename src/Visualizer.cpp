@@ -1,7 +1,7 @@
 #include "Visualizer.hpp"
-#include <iostream>
 #include "raylib.h"
 #include <cmath>
+#include <iostream>
 
 Visualizer::Visualizer(FurutaPendulum &pendulum) : pendulum_(pendulum)
 {
@@ -62,17 +62,22 @@ void Visualizer::drawPendulum()
   const float radius = 0.01f;
 
   // Draw the base
-  DrawCylinderEx((Vector3){0.0f, 0.0f, -0.2f}, (Vector3){0.0f, 0.0f, 0.0f}, radius, radius, 50, Color{100, 100, 100, 255});
+  DrawCylinderEx((Vector3){0.0f, 0.0f, -0.2f}, (Vector3){0.0f, 0.0f, 0.0f}, radius, radius, 50,
+                 Color{100, 100, 100, 255});
   DrawCube((Vector3){0.0f, 0.0f, -0.2f}, 0.05f, 0.05f, 0.05f, Color{150, 150, 150, 255});
 
   // Draw the arm
   const float arm_end_x = params.arm_length * cosf(state.arm_angle);
   const float arm_end_y = params.arm_length * sinf(state.arm_angle);
-  DrawCylinderEx((Vector3){0.0f, 0.0f, 0.0f}, (Vector3){arm_end_x, arm_end_y, 0.0f}, radius, radius, 50, Color{100, 100, 100, 255});
+  DrawCylinderEx((Vector3){0.0f, 0.0f, 0.0f}, (Vector3){arm_end_x, arm_end_y, 0.0f}, radius, radius, 50,
+                 Color{100, 100, 100, 255});
 
   // Draw the pendulum
   const Vector3 pendulum_start = (Vector3){arm_end_x, arm_end_y, 0.0f};
-  const Vector3 pendulum_end = (Vector3){arm_end_x - params.pendulum_length * sinf(state.pendulum_angle) * sinf(state.arm_angle), arm_end_y + params.pendulum_length * cosf(state.arm_angle) * sinf(state.pendulum_angle), params.pendulum_length * cosf(state.pendulum_angle)};
+  const Vector3 pendulum_end =
+      (Vector3){arm_end_x - params.pendulum_length * sinf(state.pendulum_angle) * sinf(state.arm_angle),
+                arm_end_y + params.pendulum_length * cosf(state.arm_angle) * sinf(state.pendulum_angle),
+                params.pendulum_length * cosf(state.pendulum_angle)};
   DrawCylinderEx(pendulum_start, pendulum_end, radius, radius, 50, Color{100, 100, 100, 255});
 
   // Draw the pendulum mass
@@ -93,12 +98,18 @@ void Visualizer::drawGrid()
   }
 
   // Draw axes as arrows
-  DrawCylinderEx((Vector3){0.0f, 0.0f, 0.0f}, (Vector3){1.7f * gridSpacing, 0.0f, 0.0f}, 0.002f, 0.002f, 50, Color{255, 0, 0, 150});             // X-axis
-  DrawCylinderEx((Vector3){1.7f * gridSpacing, 0.0f, 0.0f}, (Vector3){2.0f * gridSpacing, 0.0f, 0.0f}, 0.004f, 0.0f, 50, Color{255, 0, 0, 150}); // X-axis cap
-  DrawCylinderEx((Vector3){0.0f, 0.0f, 0.0f}, (Vector3){0.0f, 1.7f * gridSpacing, 0.0f}, 0.002f, 0.002f, 50, Color{0, 255, 0, 150});             // Y-axis
-  DrawCylinderEx((Vector3){0.0f, 1.7f * gridSpacing, 0.0f}, (Vector3){0.0f, 2.0f * gridSpacing, 0.0f}, 0.004f, 0.0f, 50, Color{0, 255, 0, 150}); // Y-axis cap
-  DrawCylinderEx((Vector3){0.0f, 0.0f, 0.0f}, (Vector3){0.0f, 0.0f, 1.7f * gridSpacing}, 0.002f, 0.002f, 50, Color{0, 0, 255, 150});             // Z-axis
-  DrawCylinderEx((Vector3){0.0f, 0.0f, 1.7f * gridSpacing}, (Vector3){0.0f, 0.0f, 2.0f * gridSpacing}, 0.004f, 0.0f, 50, Color{0, 0, 255, 150}); // Z-axis cap
+  DrawCylinderEx((Vector3){0.0f, 0.0f, 0.0f}, (Vector3){1.7f * gridSpacing, 0.0f, 0.0f}, 0.002f, 0.002f, 50,
+                 Color{255, 0, 0, 150}); // X-axis
+  DrawCylinderEx((Vector3){1.7f * gridSpacing, 0.0f, 0.0f}, (Vector3){2.0f * gridSpacing, 0.0f, 0.0f}, 0.004f, 0.0f, 50,
+                 Color{255, 0, 0, 150}); // X-axis cap
+  DrawCylinderEx((Vector3){0.0f, 0.0f, 0.0f}, (Vector3){0.0f, 1.7f * gridSpacing, 0.0f}, 0.002f, 0.002f, 50,
+                 Color{0, 255, 0, 150}); // Y-axis
+  DrawCylinderEx((Vector3){0.0f, 1.7f * gridSpacing, 0.0f}, (Vector3){0.0f, 2.0f * gridSpacing, 0.0f}, 0.004f, 0.0f, 50,
+                 Color{0, 255, 0, 150}); // Y-axis cap
+  DrawCylinderEx((Vector3){0.0f, 0.0f, 0.0f}, (Vector3){0.0f, 0.0f, 1.7f * gridSpacing}, 0.002f, 0.002f, 50,
+                 Color{0, 0, 255, 150}); // Z-axis
+  DrawCylinderEx((Vector3){0.0f, 0.0f, 1.7f * gridSpacing}, (Vector3){0.0f, 0.0f, 2.0f * gridSpacing}, 0.004f, 0.0f, 50,
+                 Color{0, 0, 255, 150}); // Z-axis cap
 }
 
 void Visualizer::showSimulation()
