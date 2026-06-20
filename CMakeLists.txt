@@ -8,5 +8,5 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
 include_directories(src) 
-add_executable(furuta_pendulum src/simulation_main.cpp src/FurutaPendulum.cpp src/Visualizer.cpp) 
+add_executable(furuta_pendulum src/simulation_main.cpp src/FurutaPendulum.cpp src/Visualizer.cpp src/Controller.cpp) 
 target_link_libraries(furuta_pendulum ${CMAKE_THREAD_LIBS_INIT} raylib)

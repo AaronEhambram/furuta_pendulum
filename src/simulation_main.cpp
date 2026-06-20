@@ -1,3 +1,4 @@
+#include "Controller.hpp"
 #include "FurutaPendulum.hpp"
 #include "Visualizer.hpp"
 #include <atomic>
@@ -9,15 +10,25 @@
 
 std::atomic<bool> visualizer_running(true);
 
-void run_simulation(FurutaPendulum &pendulum)
+void run_controller(Controller &controller)
+{
+  while (visualizer_running)
+  {
+    controller.computeOptimalTorque();
+    // sleep for 0.01 seconds to simulate real-time control loop
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+  }
+}
+
+void run_simulation(FurutaPendulum &pendulum, Controller &controller)
 {
   double dt = 0.001;
   auto last_time = std::chrono::system_clock::now();
   while (visualizer_running)
   {
-    const double motor_torque = 0.0;               // No control input for now
-    const double arm_distubance_torque = 0.0;      // No disturbance for now
-    const double pendulum_distubance_torque = 0.0; // No disturbance for
+    const double motor_torque = controller.getTorque(); // Use the computed optimal torque
+    const double arm_distubance_torque = 0.0;           // No disturbance for now
+    const double pendulum_distubance_torque = 0.0;      // No disturbance for
     const auto current_time = std::chrono::system_clock::now();
     const std::chrono::duration<double> elapsed_time_to_last_update = current_time - last_time;
     last_time = current_time;
@@ -26,20 +37,23 @@ void run_simulation(FurutaPendulum &pendulum)
       pendulum.update(motor_torque, arm_distubance_torque, pendulum_distubance_torque, dt);
     }
     // sleep for 0.01 seconds to simulate real-time
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2));
   }
 }
 
 int main()
 {
   Parameters params = {0.1, 0.2, 0.2, 0.1, 0.05, 9.81, 0.01, 1e-4, 1e-4, 1e-2, 1e-3};
-  FurutaPendulum pendulum(params, {0.0, 0.1, 0.0, 0.0});
-  std::thread simulation_thread(run_simulation, std::ref(pendulum));
+  FurutaPendulum pendulum(params, {0.0, M_PI, 0.0, 0.0});
+  Controller controller(pendulum);
+  std::thread controller_thread(run_controller, std::ref(controller));
+  std::thread simulation_thread(run_simulation, std::ref(pendulum), std::ref(controller));
   Visualizer visualizer(pendulum);
   // Run visualization on main thread (raylib requirement)
   visualizer.showSimulation();
   // Signal simulation thread to stop
   visualizer_running = false;
   simulation_thread.join();
+  controller_thread.join();
   return 0;
 }

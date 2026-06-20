@@ -1,0 +1,10 @@
+- 2x AS5048A für Pendel und Arm
+- ESP32 als Microcontroller
+- Reely DC Motor
+- BTS7960 als Treiber
+- Motorritzel für GT2 Riemenantrieb
+- GT2 Rundriemen
+- GT2 Abriebsrad, sodass ich eine 1:16 Übersetzung habe 
+
+Control:
+1. Swing-Up using Energy Control (Astroem)
