@@ -22,6 +22,9 @@ void Controller::computeOptimalTorque()
   const double &phi_dot = pendulum_.getState().arm_angular_velocity;
   const double &theta_dot = pendulum_.getState().pendulum_angular_velocity;
 
+  const double &phi_min = pendulum_.getParameters().arm_angle_min;
+  const double &phi_max = pendulum_.getParameters().arm_angle_max;
+
   // If the pendulum is close to the upright position and not moving much, apply a small torque to kick it up
   if (fabs(theta - M_PI) < 0.01 && fabs(theta_dot) < 0.01)
   {
@@ -49,8 +52,18 @@ void Controller::computeOptimalTorque()
   const double energy_error = E - E_desired;
   const double energy_sign =
       (energy_error > 0 && energy_error < 1.0) ? 1.0 : ((energy_error < 0 && energy_error > -1.0) ? -1.0 : 0.0);
-  const double phi_dot_dot_desired = k * energy_sign * theta_dot * cos_theta;
+  double phi_dot_dot_desired = k * energy_sign * theta_dot * cos_theta;
   const double phi_friction = b_phi * phi_dot + tau_c_phi * (phi_dot > 0 ? 1 : (phi_dot < 0 ? -1 : 0));
+
+  if (phi <= phi_min)
+  {
+    phi_dot_dot_desired = phi_dot_dot_desired < 0 ? 0 : phi_dot_dot_desired; // Prevent further negative acceleration
+  }
+  else if (phi >= phi_max)
+  {
+    phi_dot_dot_desired = phi_dot_dot_desired > 0 ? 0 : phi_dot_dot_desired; // Prevent further positive acceleration
+  }
+
   const double theta_friction = b_theta * theta_dot + tau_c_theta * (theta_dot > 0 ? 1 : (theta_dot < 0 ? -1 : 0));
   const double optimal_torque =
       phi_dot_dot_desired * (alpha + beta * sin_sqr_theta - gamma * gamma / beta * cos_sqr_theta) + phi_friction +

@@ -43,7 +43,9 @@ void run_simulation(FurutaPendulum &pendulum, Controller &controller)
 
 int main()
 {
-  Parameters params = {0.1, 0.2, 0.2, 0.1, 0.05, 9.81, 0.01, 1e-4, 1e-4, 1e-2, 1e-3};
+  Parameters params = {
+      0.1,    0.2, 0.2, 0.1, 0.05, 9.81, 0.01, 1e-4, 1e-4, 1e-2, 1e-3, -160.0 / 180.0 * M_PI, 160.0 / 180.0 * M_PI,
+      5000.0, 30.0};
   FurutaPendulum pendulum(params, {0.0, M_PI, 0.0, 0.0});
   Controller controller(pendulum);
   std::thread controller_thread(run_controller, std::ref(controller));

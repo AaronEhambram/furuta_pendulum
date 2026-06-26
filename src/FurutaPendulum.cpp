@@ -41,9 +41,22 @@ DifferentiatedState FurutaPendulum::modelFunction(const State &state, const doub
   const double gamma = (M + 1.0 / 2.0 * mp) * la * lp;
   const double delta = (M + 1.0 / 2.0 * mp) * g * lp;
 
+  // Determine torque at the angle limits
+  const double K_stop = params_.arm_stop_spring_stiffness;
+  const double D_stop = params_.arm_stop_spring_damping;
+  double tau_arm_limit = 0.0;
+  if (phi < params_.arm_angle_min)
+  {
+    tau_arm_limit = -K_stop * (phi - params_.arm_angle_min) - D_stop * phi_dot;
+  }
+  else if (phi > params_.arm_angle_max)
+  {
+    tau_arm_limit = -K_stop * (phi - params_.arm_angle_max) - D_stop * phi_dot;
+  }
+
   const double tau_arm = motor_torque - params_.arm_viscouse_friction * phi_dot -
                          params_.arm_coulomb_friction * (phi_dot > 0 ? 1 : (phi_dot < 0 ? -1 : 0)) +
-                         arm_distubance_torque;
+                         arm_distubance_torque + tau_arm_limit;
   const double tau_pendulum = -params_.pendulum_viscouse_friction * theta_dot -
                               params_.pendulum_coulomb_friction * (theta_dot > 0 ? 1 : (theta_dot < 0 ? -1 : 0)) +
                               pendulum_distubance_torque;

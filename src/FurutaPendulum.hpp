@@ -32,6 +32,10 @@ struct Parameters
   double pendulum_viscouse_friction;
   double arm_coulomb_friction;
   double pendulum_coulomb_friction;
+  double arm_angle_min;
+  double arm_angle_max;
+  double arm_stop_spring_stiffness;
+  double arm_stop_spring_damping;
 };
 
 class FurutaPendulum
